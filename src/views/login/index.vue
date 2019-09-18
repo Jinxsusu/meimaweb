@@ -8,7 +8,10 @@
     </van-cell-group>
     <div class="btn">
       <!-- 给登录按钮注册事件 -->
-      <van-button @click="onLogin" type="info">登录</van-button>
+      <van-button
+      @click="onLogin"
+      type="info"
+      :loading="isloading">登录</van-button>
     </div>
   </div>
 </template>
@@ -20,6 +23,7 @@ export default {
   name: 'LoginIndex',
   data () {
     return {
+      isloading: false, // 控制登录按钮的loading的状态
       user: {
         mobile: '13911111111',
         code: '246810'
@@ -28,6 +32,7 @@ export default {
   },
   methods: {
     async  onLogin () {
+      this.isloading = true
       // 使用try 和catch 处理异步函数的错误
       try {
         const { data } = await login(this.user)
@@ -42,6 +47,8 @@ export default {
           this.$toast.fail('登录失败,手机号或验证码有误')
         }
       }
+      // 无论登录成功还是失败 都要停止 loading 给用户返回结果
+      this.isloading = false
     }
 
   }
