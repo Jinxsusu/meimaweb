@@ -1,5 +1,6 @@
 
 import axios from 'axios'
+import JSONbig from 'json-bigint'
 // 创建axios实例
 // axios.create 的作用 是克隆一个axios 实例
 // 它的作用是和axios 是一样的
@@ -18,4 +19,11 @@ const request = axios.create({
 // 请求拦截器
 // 响应拦截器
 // 导出请求对象
+request.defaults.transformResponse = [function (data) {
+  try {
+    return JSONbig.parse(data)
+  } catch (err) {
+    return data
+  }
+}]
 export default request
