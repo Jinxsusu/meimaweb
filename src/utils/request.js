@@ -16,9 +16,11 @@ const request = axios.create({
 //     baseURL: '请求基准路径'
 //   })
 // 配置axios
+// 超出安全限制的数据的处理方式
 // 请求拦截器
 // 响应拦截器
 // 导出请求对象
+// 配置超出安全数字范围的数据 的处理方式
 request.defaults.transformResponse = [function (data) {
   try {
     return JSONbig.parse(data)
