@@ -85,8 +85,12 @@ export default {
         // 验证通过提交表单
         this.isloading = true
         const { data } = await login(this.user)
-        // 在 login 函数中 传入对应的参数
+        // 在
+        //  login 函数中 传入对应的参数
         console.log(data)
+        // 存储 token 存储在Vuex
+        // (这里没有在本地,刷新以后数据就不存在了)
+        this.$store.commit('setUser', data.data)
         this.$toast.success('登录成功')
       } catch (err) {
         // 给出错误提示

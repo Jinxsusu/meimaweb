@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
-import router from './router'
+import router from './routers'
 import store from './store'
 import './styles/index.less'
 /* 下面的这种加载方式没有 携带任何一种 校验规则 */
