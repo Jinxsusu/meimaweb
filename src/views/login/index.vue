@@ -65,7 +65,7 @@ export default {
     return {
       isloading: false, // 控制登录按钮的loading的状态
       user: {
-        mobile: '13911111111',
+        mobile: '15201230123',
         code: '246810'
       }
     }
@@ -87,7 +87,8 @@ export default {
         const { data } = await login(this.user)
         // 在
         //  login 函数中 传入对应的参数
-        console.log(data)
+        // console.log(data)
+        // 在登录事件发生以后登录成功了
         // 存储 token 存储在Vuex
         // (这里没有在本地,刷新以后数据就不存在了)
         this.$store.commit('setUser', data.data)

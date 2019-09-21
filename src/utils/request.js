@@ -25,6 +25,8 @@ request.interceptors.request.use(function (config) {
   // 添加拦截器要使用 自己克隆出来的axios实例上进行添加
   const { user } = store.state
   if (user) {
+    // Authorization 是请求头的名字 这个是后台来设置的
+    // 名字和数据格式都是后端来设置好的,不能随意设置
     config.headers.Authorization = `Bearer${user.token}`
   }
   return config

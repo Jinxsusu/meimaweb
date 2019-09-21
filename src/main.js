@@ -23,8 +23,16 @@ import {
   Cell,
   CellGroup,
   Field,
-  Toast
-} from 'vant'
+  Toast,
+  Tabbar,
+  TabbarItem,
+  Tab,
+  Tabs,
+  List,
+  Icon,
+  PullRefresh } from 'vant'
+
+Vue.use(Icon)
 
 Vue
   .use(Field)
@@ -33,6 +41,13 @@ Vue
   .use(Button)
   .use(NavBar)
   .use(Toast)
+  .use(Tabbar)
+  .use(TabbarItem)
+  .use(Tab)
+  .use(Tabs)
+  .use(List)
+  .use(Icon)
+  .use(PullRefresh)
 
 for (let rule in rules) {
   extend(rule, {
