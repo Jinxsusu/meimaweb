@@ -14,14 +14,16 @@ const router = new VueRouter({
       component: Login
     },
     {
+      // 嵌套路由如果有默认子路由，则不需要 name
       // name: 'tabbar',
-      // 如果嵌套路由有默认的子路由 就不需要设置name
       path: '/',
       component: Tabbar,
       children: [
-        { name: 'home',
-          path: '', // 默认子路由 path内设置为空
-          component: Home }
+        {
+          name: 'home',
+          path: '', // 默认子路由
+          component: Home
+        }
       ]
     }
   ]

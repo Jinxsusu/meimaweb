@@ -27,7 +27,7 @@ request.interceptors.request.use(function (config) {
   if (user) {
     // Authorization 是请求头的名字 这个是后台来设置的
     // 名字和数据格式都是后端来设置好的,不能随意设置
-    config.headers.Authorization = `Bearer${user.token}`
+    config.headers.Authorization = `Bearer ${user.token}`
   }
   return config
 },
