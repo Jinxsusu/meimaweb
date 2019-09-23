@@ -1,9 +1,17 @@
 <template>
-  <div id="home">
+  <div class="home">
     <!-- 导航栏 -->
-    <van-nav-bar title="首页" />
+    <!-- fixed 这个是组件中国nav-bar 的属性是否固定在顶部 -->
+    <van-nav-bar fixed title="首页" />
     <!-- 频道列表 -->
     <van-tabs v-model="active">
+      <!-- 设置面包按钮 点击的时候能出现 标签弹层 -->
+      <!-- 使用的是标签插槽  nav-right显示在标题的右侧-->
+      <!-- 在这个小按钮上设置点击事件 当点击时显示弹层 -->
+      <div slot="nav-right" class="wap-nav" @click="isChannelEditShow=true">
+        <van-icon name="wap-nav" size="24" />
+      </div>
+      <!-- 设置面包按钮 -->
       <van-tab :title="channel.name" v-for="channel in channels" :key="channel.id">
         <!-- 标签页的内容 展现的是当前频道下的 文章列表 -->
         <!-- v-model="loading" 控制列表组件的上拉加载的loading状态
@@ -40,11 +48,44 @@
               v-for="article in channel.articles"
               :key="article.art_id.toString()"
               :title="article.title"
-            />
+            >
+              <!-- 文章的详细信息 -->
+              <div slot="label">
+                <!-- 文章图片 -->
+                <!-- 使用了vant组件库的两个组件 一个是grid 宫格组件调整结构 -->
+                <!-- 一个是image 图片组件 (这个组件能实现图片的懒加载) -->
+                <van-grid>
+                  <van-grid-item v-for="(img,index) in article.cover.images" :key="index" text="文字">
+                    <van-image height="80" :src="img" lazy-load />
+                  </van-grid-item>
+                </van-grid>
+                <!-- 文章详细的文字信息 -->
+                <div class="article-info">
+                  <div class="meta">
+                    <span>{{article.aut_name}}</span>
+                    <span>{{article.comm_count}}</span>
+                    <span>{{article.pubdate | relativeTime }}</span>
+                  </div>
+                </div>
+              </div>
+            </van-cell>
           </van-list>
         </van-pull-refresh>
       </van-tab>
     </van-tabs>
+    <!-- 编辑频道 -->
+    <!-- 通过position属性设置弹出位置，
+    默认居中弹出，可以设置为top、bottom、left、right
+     closeable close-icon-position="top-left"
+     自定义图标 关闭按钮 后面设置的是自定义图标的显示位置
+    round 把弹层的样式设置为 圆角-->
+    <van-popup
+      v-model="isChannelEditShow"
+      position="bottom"
+      :style="{ height: '95%' }"
+      closeable
+      close-icon-position="top-right"
+    />
   </div>
 </template>
 
@@ -56,7 +97,8 @@ export default {
   data () {
     return {
       active: 0,
-      channels: []
+      channels: [],
+      isChannelEditShow: false // 控制弹出的显示和隐藏
     }
   },
   computed: {
@@ -178,9 +220,31 @@ export default {
 </script>
 
 <style lang="less" scoped>
-#home {
-  .van-tab__pane {
-    margin-bottom: 50px;
+.home {
+  .van-tabs {
+    .wap-nav {
+      position: sticky;
+      right: 0;
+      display: flex;
+      align-items: center;
+      background-color: #fff;
+      opacity: 0.8;
+    }
+    /deep/ .van-tabs__wrap--scrollable {
+      position: fixed;
+      top: 46px;
+      left: 0;
+      right: 16px;
+      z-index: 2;
+    }
+    /deep/ .van-tabs__content {
+      margin-top: 90px;
+    }
+  }
+  .article-info {
+    .meta span {
+      margin-right: 10px;
+    }
   }
 }
 </style>

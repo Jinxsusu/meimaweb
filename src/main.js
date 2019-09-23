@@ -16,7 +16,7 @@ import './styles/index.less'
 import { ValidationProvider, ValidationObserver, extend } from 'vee-validate'
 import * as rules from 'vee-validate/dist/rules' // 所有的验证 规则
 import zhCN from 'vee-validate/dist/locale/zh_CN' // 配置的语言包
-
+import { relativeTime } from './utils/date'
 import {
   Button,
   NavBar,
@@ -30,11 +30,17 @@ import {
   Tabs,
   List,
   Icon,
-  PullRefresh } from 'vant'
-
+  PullRefresh,
+  Grid,
+  GridItem,
+  Image,
+  Lazyload,
+  Popup
+} from 'vant'
+// 为了能在模板中使用relativeTime 方法
+// 所以这里将其注册为全局过滤器
+Vue.filter('relativeTime', relativeTime)
 Vue.use(Icon)
-
-Vue
   .use(Field)
   .use(Cell)
   .use(CellGroup)
@@ -48,6 +54,11 @@ Vue
   .use(List)
   .use(Icon)
   .use(PullRefresh)
+  .use(Grid)
+  .use(GridItem)
+  .use(Image)
+  .use(Lazyload)
+  .use(Popup)
 
 for (let rule in rules) {
   extend(rule, {

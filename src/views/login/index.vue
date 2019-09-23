@@ -65,7 +65,7 @@ export default {
     return {
       isloading: false, // 控制登录按钮的loading的状态
       user: {
-        mobile: '15201230123',
+        mobile: '15703219607',
         code: '246810'
       }
     }
