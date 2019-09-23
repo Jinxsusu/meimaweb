@@ -54,7 +54,7 @@
                 <!-- 文章图片 -->
                 <!-- 使用了vant组件库的两个组件 一个是grid 宫格组件调整结构 -->
                 <!-- 一个是image 图片组件 (这个组件能实现图片的懒加载) -->
-                <van-grid>
+                <van-grid :border='false' :column-num="3">
                   <van-grid-item v-for="(img,index) in article.cover.images" :key="index" text="文字">
                     <van-image height="80" :src="img" lazy-load />
                   </van-grid-item>
@@ -63,7 +63,7 @@
                 <div class="article-info">
                   <div class="meta">
                     <span>{{article.aut_name}}</span>
-                    <span>{{article.comm_count}}</span>
+                    <span>评论{{article.comm_count}}条</span>
                     <span>{{article.pubdate | relativeTime }}</span>
                   </div>
                 </div>
@@ -84,6 +84,7 @@
       position="bottom"
       :style="{ height: '95%' }"
       closeable
+      round
       close-icon-position="top-right"
     />
   </div>
@@ -121,7 +122,7 @@ export default {
         timestamp: Date.now(),
         withTop: 1
       })
-      console.log(data)
+      // console.log(data)
       // 将数据渲染到当前文章列表的顶部
       currentChannel.articles.unshift(...data.data.results)
       // 关闭当前频道下拉刷新的loading状态
