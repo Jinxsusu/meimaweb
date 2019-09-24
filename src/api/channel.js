@@ -31,7 +31,7 @@ export const resetUserChannels = channels => {
 // 删除用户频道信息
 export const deleteUserChannels = channelId => {
   return request({
-    method: 'delete',
+    method: 'DELETE',
     url: `/app/v1_0/user/channels/${channelId}`
   })
 }

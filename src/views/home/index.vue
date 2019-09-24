@@ -2,13 +2,25 @@
   <div class="home">
     <!-- 导航栏 -->
     <!-- fixed 这个是组件中国nav-bar 的属性是否固定在顶部 -->
-    <van-nav-bar fixed title="首页" />
+    <van-nav-bar fixed>
+      <!-- 自定义文本内容 搜索按钮 -->
+      <van-button
+      size="small"
+      class="search-btn"
+      round type="info"
+      slot="title"
+      icon="search"
+      >搜索</van-button>
+    </van-nav-bar>
     <!-- 频道列表 -->
     <van-tabs v-model="active">
       <!-- 设置面包按钮 点击的时候能出现 标签弹层 -->
       <!-- 使用的是标签插槽  nav-right显示在标题的右侧-->
-
-      <van-tab :title="channel.name" v-for="channel in channels" :key="channel.id">
+      <van-tab
+      :title="channel.name"
+      v-for="channel in channels"
+      :key="channel.id"
+      >
         <!-- 标签页的内容 展现的是当前频道下的 文章列表 -->
         <!-- v-model="loading" 控制列表组件的上拉加载的loading状态
         finished 用来控制列表是否加载结束
@@ -25,7 +37,10 @@
         此时可以发起异步操作并更新数据，数据更新完毕后，
         将loading设置成false即可。
         若数据已全部加载完毕，则直接将finished设置成true即可。-->
-        <van-pull-refresh v-model="channel.pullDownLoading" @refresh="onRefresh">
+        <van-pull-refresh
+        v-model="channel.pullDownLoading"
+        @refresh="onRefresh"
+        >
           <!-- refresh这个是下拉刷新组件用户向下拉列表 刷新文章列表数据。
           -注册下拉刷新事件（组件）的处理函数
           发送请求获取文章列表数据
@@ -69,7 +84,11 @@
         </van-pull-refresh>
       </van-tab>
       <!-- 在这个小按钮上设置点击事件 当点击时显示弹层 -->
-      <div slot="nav-right" class="wap-nav" @click="isChannelEditShow=true">
+      <div
+      slot="nav-right"
+      class="wap-nav"
+      @click="isChannelEditShow=true"
+      >
         <van-icon name="wap-nav" size="24" />
       </div>
       <!-- /面包按钮 -->
@@ -81,13 +100,25 @@
      closeable close-icon-position="top-left"
      自定义图标 关闭按钮 后面设置的是自定义图标的显示位置
     round 把弹层的样式设置为 圆角-->
-    <van-popup v-model="isChannelEditShow" position="bottom" :style="{ height: '95%' }" round>
+    <van-popup
+    v-model="isChannelEditShow"
+    position="bottom"
+    :style="{ height: '95%' }"
+    round
+    >
       <!-- 弹层关闭按钮图标 -->
-      <van-cell icon="cross" :border="false" @click="isChannelEditShow=false" />
+      <van-cell
+      icon="cross"
+      :border="false"
+      @click="isChannelEditShow=false" />
       <div>
         <!-- 我的频道 -->
         <van-cell title="我的频道" :border="false">
-          <van-button type="danger" @click="isEdit=!isEdit" size="mini">{{isEdit ? '完成':'编辑' }}</van-button>
+          <van-button
+          type="danger"
+          @click="isEdit=!isEdit"
+          size="mini"
+          >{{isEdit ? '完成':'编辑' }}</van-button>
         </van-cell>
         <van-grid :gutter="10">
           <van-grid-item
@@ -97,7 +128,11 @@
             :text="channel.name"
           >
             <!-- 编辑情况下的显示关闭小按钮 -->
-            <van-icon v-show="isEdit" class="close-icon" slot="icon" name="close" />
+            <van-icon
+            v-show="isEdit"
+            class="close-icon"
+            slot="icon"
+            name="close" />
           </van-grid-item>
         </van-grid>
       </div>
@@ -400,6 +435,15 @@ export default {
     position: absolute;
     top: -5px;
     right: -5px;
+  }
+  .search-btn{
+    width: 100%;
+    background-color: #5babfb;
+  }
+  .van-icon-search{
+    font-size: 16px;
+    color: #fff;
+    margin-bottom: 2px
   }
 }
 </style>
