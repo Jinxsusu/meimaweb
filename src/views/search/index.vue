@@ -15,7 +15,7 @@
     <van-cell-group>
       <van-cell
       icon="search"
-      v-for="item in 5"
+      v-for="item in suggestions"
       :key="item"
       >
         <div slot="title">{{item}}</div>
@@ -52,11 +52,25 @@
 </template>
 
 <script>
+import { getSuggestions } from '@/api/search'
 export default {
   name: 'SearchIndex',
   data () {
     return {
-      searchText: ''
+      searchText: '',
+      suggestions: [] // 获取的后台建议数据
+    }
+  },
+  watch: {// 监视搜索框中输入的数据变化
+    async searchText (newValue) {
+      // 检验新的数据是否为空
+      if (!newValue.length) {
+        return // 如果是空的就停止代码
+      }
+      // 获取数据 调用api方法 接收 获取到的后台建议数据
+      const { data } = await getSuggestions(newValue)
+      //   绑定数据在视图
+      this.suggestions = data.data.options
     }
   },
   methods: {
