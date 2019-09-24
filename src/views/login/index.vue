@@ -103,6 +103,8 @@ export default {
       }
       // 无论登录成功还是失败 都要停止 loading 给用户返回结果
       this.isloading = false
+      // 登录完成挑战到home页
+      this.$router.push('/')
     }
   }
 }
