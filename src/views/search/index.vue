@@ -100,7 +100,15 @@ export default {
     }
   },
   methods: {
-    onSearch () {},
+    onSearch () {
+      // 跳转到搜索结果页面
+      this.$router.push({
+        name: 'searchresult',
+        params: {
+          q: this.searchText
+        }
+      })
+    },
     onCancel () {},
     highLight (str) {
       const reg = new RegExp(this.searchText, 'gi') // gi表示全局搜索 i 表示 大小写不区分 规则
