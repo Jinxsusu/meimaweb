@@ -1,5 +1,5 @@
 <template>
-  <div>
+<div>
     <!-- 搜索框 -->
     <form action="/">
       <van-search
@@ -18,7 +18,14 @@
       v-for="item in suggestions"
       :key="item"
       >
-        <div slot="title">{{item}}</div>
+        <!-- 如果绑定的数据中有HTML 标签 ,则默认当做字符串渲染
+        <div slot="title">{{item}}</div>-->
+        <!-- 如果想要字符串中的Html标签渲染出来,则使用v-html指定来渲染 -->
+        <!-- <div slot="title" v-html="item"></div> -->
+        <!-- 如果这里是{{}} 绑定,那建议使用过滤器来处理渲染成其它内容,不影响数本身
+        但是,过滤器只能用于{{}} 和v-bind
+        实现方式: 使用函数就可以了-->
+         <div slot="title" v-html="highLight(item)"></div>
       </van-cell>
     </van-cell-group>
     <!-- /联想建议 -->
@@ -31,7 +38,7 @@
         name="delete"
         slot="right-icon"
         style="line-height:inherit"
-         />
+        />
       </van-cell>
       <!-- line-height: inherit
       这样设置的话 规定应该从父元素继承 line-height 属性的值。-->
@@ -61,7 +68,8 @@ export default {
       suggestions: [] // 获取的后台建议数据
     }
   },
-  watch: {// 监视搜索框中输入的数据变化
+  watch: {
+    // 监视搜索框中输入的数据变化
     async searchText (newValue) {
       // 检验新的数据是否为空
       if (!newValue.length) {
@@ -69,13 +77,35 @@ export default {
       }
       // 获取数据 调用api方法 接收 获取到的后台建议数据
       const { data } = await getSuggestions(newValue)
+      /* 为了实现搜索内容的返回数据中 的搜索关键字高亮 (字体颜色变红)
+      方式1:直接对返回的数据进行更改:
+      把返回数据中的关键字加上span标签改变颜色 用 v-html 属性渲染到视图中
+      这种方式直接改变了后台返回给我们的数据不合适 */
+      const options = data.data.options
+      //   options.forEach((item, index) => {
+      //     // 遍历返回的数据 用正则表达式 来判断是否和关键字一样
+      //     /* 正则表达式的两种表示方法
+      //         1./newValue/gi 这种方法的话 就直接把关键词当成固定值newValue,不符合实际 因为 newValue是变量
+      //         2.new RegExp('字符串匹配模式) //相当于创建了一个正则表达式 里面是一个格式 是变量可以不是固定值
+      //     */
+      //     //   处理
+      //     const reg = new RegExp(newValue, 'gi') // gi表示全局搜索 i 表示 大小写不区分 规则
+      //     options[index] = item.replace(
+      //       reg,
+      //       `<span style="color:red">${newValue}</span>`
+      //     )
+      //   })
       //   绑定数据在视图
-      this.suggestions = data.data.options
+      this.suggestions = options
     }
   },
   methods: {
     onSearch () {},
-    onCancel () {}
+    onCancel () {},
+    highLight (str) {
+      const reg = new RegExp(this.searchText, 'gi') // gi表示全局搜索 i 表示 大小写不区分 规则
+      return str.replace(reg, `<span style="color:red">${this.searchText}</span>`)
+    }
   }
 }
 </script>
