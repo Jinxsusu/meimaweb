@@ -35,7 +35,8 @@ import {
   GridItem,
   Image,
   Lazyload,
-  Popup
+  Popup,
+  Search
 } from 'vant'
 // 为了能在模板中使用relativeTime 方法
 // 所以这里将其注册为全局过滤器
@@ -59,6 +60,7 @@ Vue.use(Icon)
   .use(Image)
   .use(Lazyload)
   .use(Popup)
+  .use(Search)
 
 for (let rule in rules) {
   extend(rule, {
