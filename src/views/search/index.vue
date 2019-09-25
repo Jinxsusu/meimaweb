@@ -6,7 +6,7 @@
         v-model="searchText"
         placeholder="请输入搜索关键词"
         show-action
-        @search="onSearch"
+        @search="onSearch(searchText)"
         @cancel="onCancel"
       />
     </form>
@@ -17,6 +17,7 @@
       icon="search"
       v-for="item in suggestions"
       :key="item"
+      @click="onSearch(item)"
       >
         <!-- 如果绑定的数据中有HTML 标签 ,则默认当做字符串渲染
         <div slot="title">{{item}}</div>-->
@@ -100,16 +101,23 @@ export default {
     }
   },
   methods: {
-    onSearch () {
+    onSearch (q) {
+      // trim() 字符串方法把字符串的头部和尾部空格都去掉
+      if (!q.trim().length) {
+        return
+      }
       // 跳转到搜索结果页面
       this.$router.push({
         name: 'searchresult',
         params: {
-          q: this.searchText
+          q
         }
       })
     },
-    onCancel () {},
+    onCancel () {
+      // 取消跳转到home页
+      this.$router.push('/')
+    },
     highLight (str) {
       const reg = new RegExp(this.searchText, 'gi') // gi表示全局搜索 i 表示 大小写不区分 规则
       return str.replace(reg, `<span style="color:red">${this.searchText}</span>`)
