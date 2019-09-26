@@ -1,5 +1,5 @@
 <template>
-<div>
+  <div>
     <!-- 搜索框 -->
     <form action="/">
       <van-search
@@ -13,12 +13,7 @@
     <!-- / 搜索框 -->
     <!-- 联想建议 -->
     <van-cell-group>
-      <van-cell
-      icon="search"
-      v-for="item in suggestions"
-      :key="item"
-      @click="onSearch(item)"
-      >
+      <van-cell icon="search" v-for="item in suggestions" :key="item" @click="onSearch(item)">
         <!-- 如果绑定的数据中有HTML 标签 ,则默认当做字符串渲染
         <div slot="title">{{item}}</div>-->
         <!-- 如果想要字符串中的Html标签渲染出来,则使用v-html指定来渲染 -->
@@ -26,32 +21,40 @@
         <!-- 如果这里是{{}} 绑定,那建议使用过滤器来处理渲染成其它内容,不影响数本身
         但是,过滤器只能用于{{}} 和v-bind
         实现方式: 使用函数就可以了-->
-         <div slot="title" v-html="highLight(item)"></div>
+        <div slot="title" v-html="highLight(item)"></div>
       </van-cell>
     </van-cell-group>
     <!-- /联想建议 -->
     <!-- 历史记录 -->
     <van-cell-group>
       <van-cell title="历史记录">
-        <span style="margin-right:10px">全部删除</span>
-        <span>完成</span>
+        <!--isDeleteShow 设置 历史记录文字提示的显示隐藏 v-if 如果是true显示文字提示  -->
+        <template v-if="isDeleteShow">
+          <span style="margin-right:10px">全部删除</span>
+          <span @click="isDeleteShow=false">完成</span>
+        </template>
+        <!--  v-else 对应上面的v-if   -->
         <van-icon
         name="delete"
         slot="right-icon"
         style="line-height:inherit"
-        />
+        v-else
+        @click="isDeleteShow=true"
+            />
       </van-cell>
       <!-- line-height: inherit
       这样设置的话 规定应该从父元素继承 line-height 属性的值。-->
       <van-cell
-      :title="item"
-      v-for="item in searchHistories"
-      :key="item"
+       :title="item"
+       v-for="item in searchHistories"
+       :key="item"
       >
+      <!--isDeleteShow 设置 历史记录后面的小图标的显示或者隐藏  -->
         <van-icon
-        name="close"
-        slot="right-icon"
-        style="line-height:inherit"
+         name="close"
+         slot="right-icon"
+         style="line-height:inherit"
+         v-show="isDeleteShow"
         />
       </van-cell>
     </van-cell-group>
@@ -66,9 +69,10 @@ export default {
   name: 'SearchIndex',
   data () {
     return {
+      isDeleteShow: false,
       searchText: '',
       suggestions: [], // 获取的后台建议数据
-      searchHistories: getItem('search-histories') || []// 获取本地保存的搜索历史记录
+      searchHistories: getItem('search-histories') || [] // 获取本地保存的搜索历史记录
     }
   },
   watch: {
@@ -126,25 +130,27 @@ export default {
       // 保存历史记录到本地存储(防止刷新页面数据丢失)
       setItem('search-histories', searchHistories)
       // // 跳转到搜索结果页面
-    // this.$router.push({
-    //   name: 'searchresult',
-    //   params: {
-    //     q
-    //   }
-    // })
+      // this.$router.push({
+      //   name: 'searchresult',
+      //   params: {
+      //     q
+      //   }
+      // })
     },
 
     onCancel () {
-    // 取消跳转到home页
+      // 取消跳转到home页
       this.$router.push('/')
     },
     highLight (str) {
       const reg = new RegExp(this.searchText, 'gi') // gi表示全局搜索 i 表示 大小写不区分 规则
-      return str.replace(reg, `<span style="color:red">${this.searchText}</span>`)
+      return str.replace(
+        reg,
+        `<span style="color:red">${this.searchText}</span>`
+      )
     }
   }
 }
-
 </script>
 
 <style>
