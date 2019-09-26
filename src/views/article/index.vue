@@ -19,11 +19,14 @@
           <p class="name">{{article.aut_name}}</p>
           <p class="time">{{article.pubdate}}</p>
         </div>
+        <!-- 关注按钮 -->
         <van-button
           round
           size="small"
           type="info"
-        >+ 关注</van-button>
+          @click="onFollow"
+        >{{article.is_followed ? '已关注':'+ 关注'}}</van-button>
+         <!-- 关注按钮 /-->
       </div>
       <div class="content" v-html="article.content"></div>
       <div class="zan">
@@ -44,6 +47,7 @@
 
 <script>
 import { getArticle } from '@/api/article'
+import { followUser, unfollowUser } from '@/api/user'
 export default {
   name: 'ArticleIndex',
   data () {
@@ -62,7 +66,21 @@ export default {
     this.loadArticle()
   },
   methods: {
-
+    // 关注用户 取消关注
+    onFollow () {
+      const { is_followed: isFollowed, aut_id: autId } = this.article
+      // 如果已经关注的话 就是取消关注 否则进行关注
+      if (isFollowed) {
+        // 如果已经关注的话 就是取消关注
+        unfollowUser(autId)
+      } else {
+        // 没有关注 进行关注
+        followUser(autId)
+      }
+      // 修改数据的状态
+      this.article.is_followed = !isFollowed
+    },
+    // 获取文章详情 和 loading 状态
     async loadArticle () {
       this.loading = true
       // 请求失败的话会报错 阻止代码进行 要用try{} 和catch{} 处理一下错误
