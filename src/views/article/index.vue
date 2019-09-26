@@ -6,8 +6,12 @@
       @click-left="$router.back()"
       title="文章详情"
     ></van-nav-bar>
-    <van-loading class="article-loading" />
-    <div class="detail">
+    <!-- 文章加载中 组件 -->
+    <van-loading class="article-loading" v-if="loading" />
+    <!-- 文章加载中 组件/ -->
+    <!-- 文章详情内容 -->
+    <!-- v-else-if="article.title" 如果文章题目如果有显示的话 v-if 就是 true 否则是v-else  -->
+    <div class="detail" v-else-if="article.title">
       <h3 class="title">{{article.title}}</h3>
       <div class="author">
         <van-image round width="2rem" height="2rem" fit="fill" :src="article.aut_photo" />
@@ -28,25 +32,47 @@
         <van-button round size="small" hairline type="danger" plain icon="delete">不喜欢</van-button>
       </div>
     </div>
-    <div class="error">
+       <!-- 文章详情内容/ -->
+       <!-- 文章获取失败 提示 -->
+       <!-- v-else 对应上面的v-else-if 失败显示 提示 -->
+    <div class="error" v-else>
       <p>网络超时，点击 <a href="#" @click.prevent="loadArticle">刷新</a> 试一试。</p>
     </div>
+    <!-- 文章获取失败 提示/ -->
   </div>
 </template>
 
 <script>
+import { getArticle } from '@/api/article'
 export default {
   name: 'ArticleIndex',
   data () {
     return {
       loading: true,
       article: {
-        title: 'hello world',
-        content: '<p>hello hello</p>',
-        aut_name: 'LPZ',
-        pubdate: '4天前',
-        aut_photo: 'http://toutiao.meiduo.site/FsyeQUotMscq-vji-2ZDiXrc44k5'
+        // title: 'hello world',
+        // content: '<p>hello hello</p>',
+        // aut_name: 'LPZ',
+        // pubdate: '4天前',
+        // aut_photo: 'http://toutiao.meiduo.site/FsyeQUotMscq-vji-2ZDiXrc44k5'
       }
+    }
+  },
+  created () {
+    this.loadArticle()
+  },
+  methods: {
+
+    async loadArticle () {
+      this.loading = true
+      // 请求失败的话会报错 阻止代码进行 要用try{} 和catch{} 处理一下错误
+      try {
+        const { data } = await getArticle(this.$route.params.articleId)
+        this.article = data.data
+      } catch (err) {
+        console.log(err)
+      }
+      this.loading = false
     }
   }
 }
