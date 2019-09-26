@@ -44,9 +44,9 @@
       <!-- line-height: inherit
       这样设置的话 规定应该从父元素继承 line-height 属性的值。-->
       <van-cell
-      title="hello"
-      v-for="value in 5"
-      :key="value"
+      :title="item"
+      v-for="item in searchHistories"
+      :key="item"
       >
         <van-icon
         name="close"
@@ -61,12 +61,14 @@
 
 <script>
 import { getSuggestions } from '@/api/search'
+import { setItem, getItem } from '@/utils/storage'
 export default {
   name: 'SearchIndex',
   data () {
     return {
       searchText: '',
-      suggestions: [] // 获取的后台建议数据
+      suggestions: [], // 获取的后台建议数据
+      searchHistories: getItem('search-histories') || []// 获取本地保存的搜索历史记录
     }
   },
   watch: {
@@ -106,16 +108,34 @@ export default {
       if (!q.trim().length) {
         return
       }
-      // 跳转到搜索结果页面
-      this.$router.push({
-        name: 'searchresult',
-        params: {
-          q
-        }
+      // 记录历史记录
+      const searchHistories = this.searchHistories
+      // 如果搜索记录数组中不存在当前关键字
+      // 则添加该关键字到数组中
+      // 如果有的话找到该关键字在数组中
+      // 的位置 删除
+      const index = searchHistories.findIndex(item => {
+        // 关键字和历史记录的每一项 数据对比的时候忽略大小写和空格
+        return item.trim().toLowerCase() === q.trim().toLowerCase()
       })
+      if (index !== -1) {
+        searchHistories.splice(index, 1)
+      }
+      // 再添加让其变成首位
+      searchHistories.unshift(q)
+      // 保存历史记录到本地存储(防止刷新页面数据丢失)
+      setItem('search-histories', searchHistories)
+      // // 跳转到搜索结果页面
+    // this.$router.push({
+    //   name: 'searchresult',
+    //   params: {
+    //     q
+    //   }
+    // })
     },
+
     onCancel () {
-      // 取消跳转到home页
+    // 取消跳转到home页
       this.$router.push('/')
     },
     highLight (str) {
@@ -124,6 +144,7 @@ export default {
     }
   }
 }
+
 </script>
 
 <style>
