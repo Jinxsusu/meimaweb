@@ -12,7 +12,7 @@
     </form>
     <!-- / 搜索框 -->
     <!-- 联想建议 -->
-    <van-cell-group>
+    <van-cell-group v-if="searchText">
       <van-cell icon="search" v-for="item in suggestions" :key="item" @click="onSearch(item)">
         <!-- 如果绑定的数据中有HTML 标签 ,则默认当做字符串渲染
         <div slot="title">{{item}}</div>-->
@@ -26,35 +26,41 @@
     </van-cell-group>
     <!-- /联想建议 -->
     <!-- 历史记录 -->
-    <van-cell-group>
+    <van-cell-group v-else>
       <van-cell title="历史记录">
         <!--isDeleteShow 设置 历史记录文字提示的显示隐藏 v-if 如果是true显示文字提示  -->
         <template v-if="isDeleteShow">
-          <span style="margin-right:10px">全部删除</span>
+          <!-- 全部删除历史记录 就是直接把历史记录数组设置为空 -->
+          <span style="margin-right:10px" @click="searchHistories=[]">全部删除</span>
           <span @click="isDeleteShow=false">完成</span>
         </template>
         <!--  v-else 对应上面的v-if   -->
         <van-icon
-        name="delete"
-        slot="right-icon"
-        style="line-height:inherit"
-        v-else
-        @click="isDeleteShow=true"
-            />
+          name="delete"
+          slot="right-icon"
+          style="line-height:inherit"
+          v-else
+          @click="isDeleteShow=true"
+        />
       </van-cell>
       <!-- line-height: inherit
       这样设置的话 规定应该从父元素继承 line-height 属性的值。-->
       <van-cell
-       :title="item"
-       v-for="item in searchHistories"
-       :key="item"
+        @click="onSearch(item)"
+        :title="item"
+        v-for="(item,index) in searchHistories"
+        :key="item"
       >
-      <!--isDeleteShow 设置 历史记录后面的小图标的显示或者隐藏  -->
+        <!--isDeleteShow 设置 历史记录后面的小图标的显示或者隐藏
+        @click="searchHistories.splice(index,1)"
+        删除对应 icon的历史记录 直接用 splice 删除 历史记录数据数组
+        对应下标的一项即可 这个删除是假删除 历史记录还在 本地保存-->
         <van-icon
-         name="close"
-         slot="right-icon"
-         style="line-height:inherit"
-         v-show="isDeleteShow"
+          name="close"
+          slot="right-icon"
+          style="line-height:inherit"
+          v-show="isDeleteShow"
+          @click.stop="searchHistories.splice(index,1)"
         />
       </van-cell>
     </van-cell-group>
@@ -65,19 +71,20 @@
 <script>
 import { getSuggestions } from '@/api/search'
 import { setItem, getItem } from '@/utils/storage'
+import { debounce } from 'lodash'
 export default {
   name: 'SearchIndex',
   data () {
     return {
       isDeleteShow: false,
-      searchText: '',
+      searchText: '', // 如果搜索框有内容显示联想建议 如果是空的话就显示历史记录
       suggestions: [], // 获取的后台建议数据
       searchHistories: getItem('search-histories') || [] // 获取本地保存的搜索历史记录
     }
   },
   watch: {
     // 监视搜索框中输入的数据变化
-    async searchText (newValue) {
+    searchText: debounce(async function (newValue) {
       // 检验新的数据是否为空
       if (!newValue.length) {
         return // 如果是空的就停止代码
@@ -104,6 +111,17 @@ export default {
       //   })
       //   绑定数据在视图
       this.suggestions = options
+    }, 500),
+    // 这种方法不适合本地保存历史 记录
+    // 监视不是立即发生的，起码等着当前函数执行完它才会去判定数据到底有没有改变
+
+    // 虽然我们通过监视数据改变的方式处理数据的持久化
+    // 但是这里还要手动的来存储这个数据，因为后面的代码会发生页面跳转
+    // 页面跳转的时候回先销毁当前页面
+    // （事件、watch、生命周期。。。。都被干掉了），然后再加载新的页面
+    searchHistories (newValue) {
+      // 当历史记录数据发生变化的时候 ,监视到他,重新 保存到本地存储
+      setItem('search-histories', newValue)
     }
   },
   methods: {
@@ -127,15 +145,15 @@ export default {
       }
       // 再添加让其变成首位
       searchHistories.unshift(q)
-      // 保存历史记录到本地存储(防止刷新页面数据丢失)
+      // 保存历史记录到本地存储(防止刷新页面数据丢失 不适合用watch 监视数据的方式 因为他不是立即执行的)
       setItem('search-histories', searchHistories)
-      // // 跳转到搜索结果页面
-      // this.$router.push({
-      //   name: 'searchresult',
-      //   params: {
-      //     q
-      //   }
-      // })
+      // 跳转到搜索结果页面
+      this.$router.push({
+        name: 'searchresult',
+        params: {
+          q
+        }
+      })
     },
 
     onCancel () {
