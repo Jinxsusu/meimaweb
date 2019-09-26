@@ -23,3 +23,37 @@ export const getArticle = articleId => {
 
   })
 }
+// 点赞文章
+export const likeArticle = articleId => {
+  return request({
+    method: 'POST',
+    url: '/app/v1_0/article/likings',
+    data: {
+      target: articleId
+    }
+  })
+}
+// 取消点赞文章
+export const unlikeArticle = articleId => {
+  return request({
+    method: 'DELETE',
+    url: `/app/v1_0/article/likings/${articleId}`
+  })
+}
+// 踩文章
+export const dislikeArticle = articleId => {
+  return request({
+    method: 'POST',
+    url: '/app/v1_0/article/dislikes',
+    data: {
+      target: articleId
+    }
+  })
+}
+// 取消踩文章
+export const undislikeArticle = articleId => {
+  return request({
+    method: 'DELETE',
+    url: `/app/v1_0/article/dislikes/${articleId}`
+  })
+}
