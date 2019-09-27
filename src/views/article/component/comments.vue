@@ -17,7 +17,7 @@
           width="30"
           height="30"
           style="margin-right: 10px;"
-          src="comment.aut_name"
+          :src="comment.aut_photo"
         />
         <span style="color: #466b9d;" slot="title">{{ comment.aut_name}}</span>
         <div slot="label">
@@ -37,8 +37,14 @@
       <van-field
         clearable
         placeholder="请输入评论内容"
+        v-model="commentText"
       >
-        <van-button slot="button" size="mini" type="info">发布</van-button>
+        <van-button
+         slot="button"
+         size="mini"
+         type="info"
+         @click="onPublishComment"
+         >发布</van-button>
       </van-field>
     </van-cell-group>
     <!-- /发布评论 -->
@@ -46,7 +52,7 @@
 </template>
 
 <script>
-import { getArticleComment } from '@/api/comment'
+import { getArticleComment, addArticleComment } from '@/api/comment'
 export default {
   name: 'ArticleComment',
   // 接收父组件传过来的文章id
@@ -57,11 +63,29 @@ export default {
       loading: false, // 上拉加载更多的 loading
       finished: false, // 是否加载结束
       offset: null, // 获取下一页数据的页码,第一页默认为null
-      limit: 10 // 每次请求获取评论的条数 也就是每页的大小
+      limit: 10, // 每次请求获取评论的条数 也就是每页的大小
+      commentText: ''
     }
   },
 
   methods: {
+    // 添加文章评论
+    async onPublishComment () {
+    // 非空校验
+      const commentText = this.commentText.trim()
+      if (!commentText.length) {
+
+      }
+      // 请求添加文章评论
+      const { data } = await addArticleComment({
+        target: this.articleId,
+        content: this.commentText
+      })
+      //   console.log(data)
+      this.list.unshift(data.data.new_obj)
+      // 清空 评论
+      this.commentText = ''
+    },
     async onLoad () {
       // 1.获取评论数据
       const { data } = await getArticleComment({
