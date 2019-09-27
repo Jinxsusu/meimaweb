@@ -39,14 +39,15 @@
         &nbsp;&nbsp;&nbsp;&nbsp;
         <!-- 不喜欢按钮 -->
         <van-button
-         @click="onDislike"
-         round
-         size="small"
-         hairline
-         :type="article.attitude===0 ?'default':'danger'"
-         plain icon="delete"
-         >{{article.attitude===0 ?'取消踩':'踩'}}</van-button>
-         <!-- 不喜欢按钮 /-->
+          @click="onDislike"
+          round
+          size="small"
+          hairline
+          :type="article.attitude===0 ?'default':'danger'"
+          plain
+          icon="delete"
+        >{{article.attitude===0 ?'取消踩':'踩'}}</van-button>
+        <!-- 不喜欢按钮 /-->
       </div>
     </div>
     <!-- 文章详情内容/ -->
@@ -59,14 +60,27 @@
       </p>
     </div>
     <!-- 文章获取失败 提示/ -->
+    <!-- 文章评论 -->
+    <article-comment :article-id="$route.params.articleId" />
+    <!-- 文章评论/ -->
   </div>
 </template>
 
 <script>
-import { getArticle, likeArticle, unlikeArticle, undislikeArticle, dislikeArticle } from '@/api/article'
+import {
+  getArticle,
+  likeArticle,
+  unlikeArticle,
+  undislikeArticle,
+  dislikeArticle
+} from '@/api/article'
 import { followUser, unfollowUser } from '@/api/user'
+import ArticleComment from './component/comments'
 export default {
   name: 'ArticleIndex',
+  components: {
+    ArticleComment
+  },
   data () {
     return {
       loading: true,
