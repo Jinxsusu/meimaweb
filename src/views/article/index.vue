@@ -1,68 +1,73 @@
 <template>
   <div class="article-container">
+    <!-- 导航栏 -->
     <van-nav-bar fixed left-arrow @click-left="$router.back()" title="文章详情"></van-nav-bar>
-    <!-- 文章加载中 组件 -->
+    <!-- /导航栏 -->
+
+    <!-- 加载中 loading -->
     <van-loading class="article-loading" v-if="loading" />
-    <!-- 文章加载中 组件/ -->
-    <!-- 文章详情内容 -->
-    <!-- v-else-if="article.title" 如果文章题目如果有显示的话 v-if 就是 true 否则是v-else  -->
+    <!-- /加载中 loading -->
+
+    <!-- 文章详情 -->
     <div class="detail" v-else-if="article.title">
-      <h3 class="title">{{article.title}}</h3>
+      <h3 class="title">{{ article.title }}</h3>
       <div class="author">
         <van-image round width="2rem" height="2rem" fit="fill" :src="article.aut_photo" />
         <div class="text">
-          <p class="name">{{article.aut_name}}</p>
-          <p class="time">{{article.pubdate}}</p>
+          <p class="name">{{ article.aut_name }}</p>
+          <p class="time">{{ article.pubdate | relativeTime }}</p>
         </div>
         <!-- 关注按钮 -->
         <van-button
           round
           size="small"
-          :type="article.is_followed ? 'default':'info'"
+          :type="article.is_followed ? 'default' : 'info'"
           @click="onFollow"
-        >{{article.is_followed ? '已关注':'+ 关注'}}</van-button>
-        <!-- 关注按钮 /-->
+        >{{ article.is_followed ? '已关注' : '+ 关注' }}</van-button>
+        <!-- /关注按钮 -->
       </div>
       <div class="content" v-html="article.content"></div>
       <div class="zan">
         <!-- 点赞按钮 -->
         <van-button
-          @click="onLike"
           round
           size="small"
           hairline
-          :type="article.attitude===1 ?'default':'primary'"
+          :type="article.attitude === 1 ? 'default' : 'primary'"
           plain
           icon="good-job-o"
-        >{{article.attitude===1 ?'取消点赞':'点赞'}}</van-button>
-        <!-- 点赞按钮 /-->
+          @click="onLike"
+        >{{ article.attitude === 1 ? '取消点赞' : '+ 点赞' }}</van-button>
+        <!-- /点赞按钮 -->
+
         &nbsp;&nbsp;&nbsp;&nbsp;
         <!-- 不喜欢按钮 -->
         <van-button
-          @click="onDislike"
           round
           size="small"
           hairline
-          :type="article.attitude===0 ?'default':'danger'"
+          :type="article.attitude === 0 ? 'default' : 'danger'"
           plain
           icon="delete"
-        >{{article.attitude===0 ?'取消踩':'踩'}}</van-button>
-        <!-- 不喜欢按钮 /-->
+          @click="onDislike"
+        >{{ article.attitude === 0 ? '取消不喜欢' : '不喜欢' }}</van-button>
+        <!-- /不喜欢按钮 -->
       </div>
     </div>
-    <!-- 文章详情内容/ -->
-    <!-- 文章获取失败 提示 -->
-    <!-- v-else 对应上面的v-else-if 失败显示 提示 -->
+    <!-- /文章详情 -->
+
+    <!-- 加载失败提示 -->
     <div class="error" v-else>
       <p>
         网络超时，点击
         <a href="#" @click.prevent="loadArticle">刷新</a> 试一试。
       </p>
     </div>
-    <!-- 文章获取失败 提示/ -->
+    <!-- /加载失败提示 -->
+
     <!-- 文章评论 -->
     <article-comment :article-id="$route.params.articleId" />
-    <!-- 文章评论/ -->
+    <!-- /文章评论 -->
   </div>
 </template>
 
@@ -71,11 +76,12 @@ import {
   getArticle,
   likeArticle,
   unlikeArticle,
-  undislikeArticle,
-  dislikeArticle
+  dislikeArticle,
+  undislikeArticle
 } from '@/api/article'
 import { followUser, unfollowUser } from '@/api/user'
-import ArticleComment from './component/comments'
+import ArticleComment from './components/comment.vue'
+
 export default {
   name: 'ArticleIndex',
   components: {
@@ -93,56 +99,14 @@ export default {
       }
     }
   },
+
   created () {
     this.loadArticle()
   },
+
   methods: {
-    // 踩文章 取消踩(不喜欢)
-    onDislike () {
-      const { attitude } = this.article
-      const articleId = this.article.art_id.toString()
-      if (attitude === 0) {
-        // 如果用户已经踩(不喜欢) 就取消踩(不喜欢)
-        undislikeArticle(articleId)
-        this.article.attitude = -1
-      } else {
-        // 否则的话就踩(不喜欢)
-        dislikeArticle(articleId)
-        this.article.attitude = 0
-      }
-    },
-    // 点赞文章 取消点赞
-    onLike () {
-      const { attitude } = this.article
-      const articleId = this.article.art_id.toString()
-      if (attitude === 1) {
-        // 如果用户已经点赞 就取消点赞
-        unlikeArticle(articleId)
-        this.article.attitude = -1
-      } else {
-        // 否则的话就点赞
-        likeArticle(articleId)
-        this.article.attitude = 1
-      }
-    },
-    // 关注用户 取消关注
-    onFollow () {
-      const { is_followed: isFollowed, aut_id: autId } = this.article
-      // 如果已经关注的话 就是取消关注 否则进行关注
-      if (isFollowed) {
-        // 如果已经关注的话 就是取消关注
-        unfollowUser(autId)
-      } else {
-        // 没有关注 进行关注
-        followUser(autId)
-      }
-      // 修改数据的状态
-      this.article.is_followed = !isFollowed
-    },
-    // 获取文章详情 和 loading 状态
     async loadArticle () {
       this.loading = true
-      // 请求失败的话会报错 阻止代码进行 要用try{} 和catch{} 处理一下错误
       try {
         const { data } = await getArticle(this.$route.params.articleId)
         this.article = data.data
@@ -150,6 +114,56 @@ export default {
         console.log(err)
       }
       this.loading = false
+    },
+
+    onFollow () {
+      const { is_followed: isFollowed, aut_id: autId } = this.article
+
+      if (isFollowed) {
+        // 已关注，取消关注
+        unfollowUser(autId)
+        // this.article.is_followed = false
+      } else {
+        // 没有关注，去关注
+        followUser(autId)
+        // this.article.is_followed = true
+      }
+
+      // 修改视图数据
+      this.article.is_followed = !isFollowed
+    },
+
+    onLike () {
+      const { attitude } = this.article
+      const articleId = this.article.art_id.toString()
+
+      if (attitude === 1) {
+        // 已点赞，取消点赞
+        unlikeArticle(articleId)
+        this.article.attitude = -1
+      } else {
+        // 没有点赞，去点赞
+        likeArticle(articleId)
+        this.article.attitude = 1
+      }
+    },
+
+    /**
+     * 对文章不喜欢/取消不喜欢
+     */
+    onDislike () {
+      const { attitude } = this.article
+      const articleId = this.article.art_id.toString()
+
+      if (attitude === 0) {
+        // 已不喜欢，取消不喜欢
+        undislikeArticle(articleId)
+        this.article.attitude = -1
+      } else {
+        // 没有不喜欢，去不喜欢
+        dislikeArticle(articleId)
+        this.article.attitude = 0
+      }
     }
   }
 }

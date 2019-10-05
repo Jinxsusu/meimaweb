@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 // 获取文章评论
-export const getArticleComment = ({
+export const getComments = ({
   type,
   source,
   offset,
@@ -17,8 +17,8 @@ export const getArticleComment = ({
     }
   })
 }
-// 添加文章评论
-export const addArticleComment = ({
+// 添加文章评论 回复评论添加
+export const addComment = ({
   target,
   content,
   artId

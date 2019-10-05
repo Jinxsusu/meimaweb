@@ -6,6 +6,7 @@ import Home from '@/views/home'
 import Search from '@/views/search'
 import SearchResult from '@/views/search-result'
 import Article from '@/views/article'
+import My from '@/views/my'
 Vue.use(VueRouter)
 const router = new VueRouter({
   // 配置路由表
@@ -40,6 +41,11 @@ const router = new VueRouter({
           name: 'home',
           path: '', // 默认子路由
           component: Home
+        },
+        {
+          name: 'my',
+          path: '/my', // 默认子路由
+          component: My
         }
       ]
     }
