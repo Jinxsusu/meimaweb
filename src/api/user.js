@@ -42,3 +42,10 @@ export const unfollowUser = userId => {
     url: `/app/v1_0/user/followings/${userId}`
   })
 }
+// 获取用户自己信息
+export const getSelf = () => {
+  return request({
+    method: 'GET',
+    url: '/app/v1_0/user'
+  })
+}
