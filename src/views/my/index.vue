@@ -2,6 +2,7 @@
   <div>
     <!-- 未登录 -->
     <div class="not-login" v-if="!$store.state.user">
+      <!-- 未登录点击圆圈 跳转到登录页面 -->
       <div class="circle" @click="$router.push({ name: 'login' })">
         <span>登录</span>
       </div>
@@ -10,7 +11,13 @@
 
     <!-- 用户信息 -->
     <van-cell-group class="user-info" v-else>
-      <van-cell class="base-info" is-link :border="false">
+      <van-cell
+        class="base-info"
+        is-link
+        :border="false"
+        @click="$router.push('/user')"
+        >
+        <!-- 我的页面中点击用户信息跳转到个人信息页面 可以编辑个人信息 -->
         <div slot="title">
           <img class="avatar" :src="user.photo">
           <span class="title">{{user.name}}</span>
@@ -69,7 +76,7 @@ export default {
     async loadUser () {
       const { data } = await getSelf()
       this.user = data.data
-      console.log(data)
+      // console.log(data)
     }
   },
   created () {
